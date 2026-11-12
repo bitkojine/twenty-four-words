@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Twenty-Four Words</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="icon" href="data:,">
+<meta name="description" content="The story of an unsolved 0.2024 BTC puzzle hidden in a French book, and every reading, run and mistake of one team's attempt to crack it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one long reading column built around a seed backup card; wide figures break out of the column. */
+:root{
+  --paper:#eef1f3; --sheet:#f9fafb; --ink:#14212b; --muted:#56656f; --rule:#cbd3d9;
+  --amber:#9a5208; --amber-soft:#f6e6d2; --sure:#2f6f55; --sure-soft:#dcece4; --bit:#7b8993; --open:#9a3b2f; --open-soft:#f3dfdb;
+  --mid:#7a5c0c; --mid-soft:#f1e8cc;
+  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f171d; --sheet:#16212a; --ink:#e3e9ed; --muted:#93a3ad; --rule:#2a3a45;
+  --amber:#f0a24a; --amber-soft:#3a2a17; --sure:#7cc6a3; --sure-soft:#183229; --open:#ef9a8c; --open-soft:#3a1f1b;
+  --mid:#e0c26a; --mid-soft:#332b14; --bit:#5d6f7b; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f171d; --sheet:#16212a; --ink:#e3e9ed; --muted:#93a3ad; --rule:#2a3a45;
+  --amber:#f0a24a; --amber-soft:#3a2a17; --sure:#7cc6a3; --sure-soft:#183229; --open:#ef9a8c; --open-soft:#3a1f1b;
+  --mid:#e0c26a; --mid-soft:#332b14; --bit:#5d6f7b; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 var(--body);
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+main{max-width:1080px;margin:0 auto;padding-block:40px 80px;display:flex;flex-direction:column;gap:88px}
+.col{max-width:680px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.08}
+h1{font-size:clamp(2.6rem,7vw,4.6rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0}
+a{color:var(--amber);text-underline-offset:3px}
+a:focus-visible,button:focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:3px}
+.eyebrow{font:500 .78rem/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.stack{display:flex;flex-direction:column;gap:16px}
+.stack-lg{display:flex;flex-direction:column;gap:28px}
+.lede{font-size:1.2rem;line-height:1.55;color:var(--ink)}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.92em}
+.num{font-variant-numeric:tabular-nums}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:48px;align-items:start}
+@media (max-width:860px){.hero{grid-template-columns:minmax(0,1fr)}}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.stat{background:var(--sheet);padding:14px 14px 12px;display:flex;flex-direction:column;gap:4px}
+.stat b{font:700 1.6rem/1.1 var(--display);font-variant-numeric:tabular-nums}
+.stat span{font-size:.8rem;color:var(--muted);line-height:1.3}
+
+/* seed card */
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:20px;box-shadow:0 1px 0 var(--rule),0 18px 40px -28px rgba(20,33,43,.45)}
+.card-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:1px dashed var(--rule);padding-bottom:12px;margin-bottom:14px}
+.card-title{margin:0;font-family:var(--display);font-weight:700;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 10px}
+@media (max-width:420px){.slots{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.slot{display:grid;grid-template-columns:1.9em minmax(0,1fr);align-items:baseline;gap:4px;padding:6px 8px;border-radius:5px;background:var(--paper);border-left:3px solid var(--c, var(--rule))}
+.slot .n{font:500 .78rem var(--mono);color:var(--muted);font-variant-numeric:tabular-nums}
+.slot .w{font:500 .95rem var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slot .src{grid-column:2;font-size:.7rem;color:var(--muted);line-height:1.2}
+.slot[data-s="sure"]{--c:var(--sure)} .slot[data-s="mid"]{--c:var(--mid)} .slot[data-s="open"]{--c:var(--open)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:14px;font-size:.78rem;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.masked{letter-spacing:-.05em;color:var(--muted)}
+.wd{font-family:var(--mono);font-size:.92em;background:var(--amber-soft);padding:0 .3em;border-radius:3px}
+.wd.masked{background:var(--paper);border:1px dashed var(--rule)}
+
+/* clues */
+.clues{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 28px;counter-reset:none}
+@media (max-width:760px){.clues{grid-template-columns:minmax(0,1fr)}}
+.clue{display:grid;grid-template-columns:2.4em minmax(0,1fr);gap:10px;padding:12px 0;border-top:1px solid var(--rule)}
+.clue .k{font:700 1.2rem var(--display);color:var(--amber);font-variant-numeric:tabular-nums}
+.clue q{font-style:italic;quotes:"“" "”"}
+.clue .d{display:block;font:.72rem var(--mono);color:var(--muted);margin-top:4px;letter-spacing:.04em}
+
+/* bits figure */
+.fig{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:20px;overflow-x:auto}
+.bits{display:flex;gap:3px;min-width:640px}
+.bits div{flex:1;height:34px;border-radius:2px;background:var(--bit)}
+.bits .e{background:var(--sure)} .bits .c{background:var(--amber)} .bits .k{background:var(--open)}
+.bits-lab{display:flex;justify-content:space-between;min-width:640px;font:.75rem var(--mono);color:var(--muted);margin-top:8px}
+
+/* blocks */
+.blocks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:760px){.blocks{grid-template-columns:minmax(0,1fr)}}
+.block{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.block header{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.block .tag{font:500 .72rem var(--mono);letter-spacing:.08em;color:var(--muted)}
+.meter{height:6px;background:var(--paper);border-radius:3px;overflow:hidden}
+.meter span{display:block;height:100%;background:var(--c, var(--amber));border-radius:3px}
+.block[data-s="sure"]{--c:var(--sure)} .block[data-s="mid"]{--c:var(--mid)} .block[data-s="open"]{--c:var(--open)}
+.block p{font-size:.94rem}
+.conf{font:500 .8rem var(--mono);color:var(--c)}
+
+/* chart */
+.chart-wrap{background:var(--sheet);border:1px solid var(--rule);border-radius:10px;padding:18px 18px 10px;overflow-x:auto}
+#chart{display:block;width:100%;min-width:620px;height:auto}
+#chart text{fill:var(--muted);font:11px var(--mono)}
+#chart .grid{stroke:var(--rule);stroke-width:1}
+#chart .cum{fill:none;stroke:var(--amber);stroke-width:2.5}
+#chart .area{fill:var(--amber-soft)}
+#chart .dot{fill:var(--ink);opacity:.55}
+#chart .end{fill:var(--amber)}
+#chart .lbl{fill:var(--ink);font:600 12px var(--body)}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:8px;background:var(--sheet)}
+table{border-collapse:collapse;width:100%;font-size:.88rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font:500 .72rem var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--paper)}
+tr:last-child td{border-bottom:0}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* lessons */
+.lessons{display:grid;gap:0;counter-reset:l}
+.lesson{display:grid;grid-template-columns:3rem minmax(0,1fr);gap:14px;padding:18px 0;border-top:1px solid var(--rule)}
+.lesson::before{counter-increment:l;content:counter(l);font:800 2rem/1 var(--display);color:var(--amber)}
+.lesson h3{margin-bottom:6px}
+.tools{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+@media (max-width:760px){.tools{grid-template-columns:minmax(0,1fr)}}
+.tool{border-top:3px solid var(--ink);padding-top:10px;display:flex;flex-direction:column;gap:6px}
+.tool b{font-family:var(--mono);font-size:.9rem}
+.tool p{font-size:.9rem;color:var(--muted)}
+.callout{border-left:3px solid var(--amber);padding:4px 0 4px 16px}
+footer{max-width:1080px;margin:0 auto;padding-block:28px 48px;border-top:1px solid var(--rule);font-size:.82rem;color:var(--muted);display:flex;flex-direction:column;gap:8px}
+@media (prefers-reduced-motion:no-preference){.slot{animation:rise .5s both;animation-delay:calc(var(--i)*22ms)}@keyframes rise{from{transform:translateY(4px)}to{transform:none}}}
+</style>
+</head>
+<body>
+<main>
+
+<section class="hero">
+  <div class="stack-lg">
+    <p class="eyebrow">An unsolved Bitcoin book puzzle · status 12 Nov 2026, 11:45 UTC</p>
+    <h1>Twenty-four words, one French book, 0.2024&nbsp;BTC.</h1>
+    <p class="lede">In August 2024 the author of a French book about energy and money hid a bitcoin prize behind a 24-word seed phrase. Twenty-one words are in the book. Fourteen clues were published. Two years later the coins have still not moved.</p>
+    <p>This is the story of one attempt: one person and a crew of AI assistants, four days of reading, arguing and brute force, 160 logged searches over 5.0 trillion candidate phrases, and not a single hit. We didn't win (yet), so here is everything we learned.</p>
+    <div class="stats">
+      <div class="stat"><b class="num">160</b><span>logged search runs</span></div>
+      <div class="stat"><b class="num">5.0 trillion</b><span>candidate phrases checked</span></div>
+      <div class="stat"><b class="num">0</b><span>hits</span></div>
+    </div>
+  </div>
+  <div class="card" aria-label="The 24 positions of the seed phrase and how sure we are of each">
+    <div class="card-head"><p class="card-title">Recovery sheet · 24 words</p><span class="eyebrow">our reading</span></div>
+    <div class="slots" id="slots"></div>
+    <div class="legend"><span><i style="background:var(--sure)"></i>near certain</span><span><i style="background:var(--mid)"></i>argued, untested alone</span><span><i style="background:var(--open)"></i>weakest link</span></div>
+  </div>
+</section>
+
+<section class="stack-lg">
+  <div class="col stack">
+    <p class="eyebrow">01 · The setup</p>
+    <h2>A book, an address, and a wallet nobody can open</h2>
+    <p>The book is Pierre Noizat's <i>L'énergie, face cachée de la monnaie</i> (2024). On 15 August 2024 a single transaction sent 0.2024 BTC to a native SegWit address, <code>bc1q8zfy…pgc02</code>, at the first receive path <code>m/84'/0'/0'/0/0</code>. Whoever rebuilds the 24-word phrase can spend it.</p>
+    <p>The rules are strict. All 24 words are on the official BIP39 word lists. Words 1 to 21 are French and printed in the book; each is swapped for the English word at the same line number of the list. Words 22 to 24 are English. The clues were drip-fed between August and December 2024, and a publisher's LinkedIn post in 2026 brought a fresh wave of hunters, many with AI tools.</p>
+  </div>
+  <div class="clues">
+    <div class="clue"><span class="k">1</span><div><q>A picture is worth a thousand words, but eight pictures are worth fourteen.</q><span class="d">words 1–14</span></div></div><div class="clue"><span class="k">2</span><div><q>Then there are 2 Olympic years.</q><span class="d">words 15–16</span></div></div><div class="clue"><span class="k">3</span><div><q>Department of origin.</q><span class="d">word 17</span></div></div><div class="clue"><span class="k">4</span><div><q>2 in the table of contents.</q><span class="d">words 18–19</span></div></div><div class="clue"><span class="k">5</span><div><q>2 in a chapter that deals with a central theme of the book.</q><span class="d">words 20–21</span></div></div><div class="clue"><span class="k">6</span><div><q>Une traduction en anglais est en cours.</q><span class="d">the last words are English</span></div></div><div class="clue"><span class="k">7</span><div><q>In the end, decentralized networks always prevail.</q><span class="d">words 22–24</span></div></div><div class="clue"><span class="k">8–9</span><div><q>The first 21 words are in French and the last 3 in English … the word staff (1697) can be used in the 24th position.</q><span class="d">rank mapping + check</span></div></div><div class="clue"><span class="k">10</span><div><q>The first 14 words are contained in the book&#x27;s images, taken in order. Million, minutes and opinions are not part of the solution.</q><span class="d">words 1–14</span></div></div><div class="clue"><span class="k">10</span><div><q>The 13th and 14th words are on the cover.</q><span class="d">words 13–14</span></div></div><div class="clue"><span class="k">11</span><div><q>The Olympic years are linked to the author&#x27;s biography … the 17th word is linked to the author&#x27;s name.</q><span class="d">words 15–17</span></div></div><div class="clue"><span class="k">12</span><div><q>The 18th and 19th words are in the summary.</q><span class="d">words 18–19</span></div></div><div class="clue"><span class="k">13</span><div><q>Words 20–21 appear at the start of a chapter on a central theme of the book.</q><span class="d">words 20–21</span></div></div><div class="clue"><span class="k">14</span><div><q>Words 22–24 form a slogan used in 2024 by a world-famous brand, inspired by a title from Tomorrow x Together.</q><span class="d">words 22–24</span></div></div>
+  </div>
+</section>
+
+<section class="stack-lg">
+  <div class="col stack">
+    <p class="eyebrow">02 · The check</p>
+    <h2>Eight words that work like a lie detector</h2>
+    <p>A 24-word phrase carries 264 bits: 256 bits of key plus an 8-bit checksum, the first byte of the SHA-256 of those 256 bits. Words 1–23 hold 253 key bits, so the last word carries the final 3 key bits plus the checksum. No clue gives those 3 bits, so from our side they can be any of 8 values, and each value gives a different valid last word.</p>
+    <p>The setter did something clever. He gave eight different words that are all valid in slot 24 for the right first 23 words: <span class="wd">alien</span> <span class="wd">detect</span> <span class="wd">flip</span> <span class="wd">gas</span> <span class="wd">organ</span> <span class="wd">peasant</span> <span class="wd">staff</span> <span class="wd">trigger</span>. Their list positions fall one in each block of 256, which pins down all 8 checksum bits under all 8 settings of the 3 free bits. A wrong 23-word guess passes all eight by chance about once in 2<sup>64</sup>. So we never needed the blockchain to test a guess: one hash per candidate and a hit is proof.</p>
+  </div>
+  <div class="fig" role="region" tabindex="0" aria-label="Bit layout of a 24-word phrase">
+    <div class="bits" id="bits"></div>
+    <div class="bits-lab"><span>words 1–23 · 253 bits we must find</span><span>word 24: 3 key bits + 8-bit checksum</span></div>
+    <div class="legend"><span><i style="background:var(--sure)"></i>known from the slogan (words 22–23)</span><span><i style="background:var(--bit)"></i>book words 1–21</span><span><i style="background:var(--open)"></i>3 key bits held by word 24</span><span><i style="background:var(--amber)"></i>checksum the 8 words reveal</span></div>
+  </div>
+  <p class="col muted">The final 24th word is not one of the eight and breaks the checksum on purpose, so it has to come from the clue, not from math. That part was the easiest: Samsung's 2024 Galaxy campaign with the K-pop group TXT was called <i>Open Always Wins</i>.</p>
+</section>
+
+<section class="stack-lg">
+  <div class="col stack">
+    <p class="eyebrow">03 · Our reading</p>
+    <h2>Eight blocks, each with its own argument</h2>
+    <p>We split the phrase into eight blocks by the clue that feeds them, and gave each a rough confidence. These are planning weights from our own notes, not measured odds. Words we still believe in are masked while the prize is unclaimed. Words we have already ruled out are shown.</p>
+  </div>
+  <div class="blocks">
+    <article class="block" data-s="mid"><header><h3>Pictures</h3><span class="tag">Words 1–12</span></header><div class="meter"><span style="width:55%"></span></div><span class="conf">55% planning weight</span><p>Eight pictures are meant to give fourteen words. We read the seven numbered figures that carry text, plus the cover, and drop any word that is plural or appears in more than one picture. That rule is the only one we found that lands on exactly fourteen. The setter named <span class="wd">million</span>, <span class="wd">minutes</span> and <span class="wd">opinions</span> as decoys. Our twelve: <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮</span>. Ruled out in every tested combination: reading the e-book's extra unlabelled images (<span class="wd">séquence</span>, <span class="wd">outil</span>, <span class="wd">nombreux</span>, <span class="wd">ampleur</span>) and every reordering of the figures we could argue for.</p></article><article class="block" data-s="mid"><header><h3>Cover</h3><span class="tag">Words 13–14</span></header><div class="meter"><span style="width:65%"></span></div><span class="conf">65% planning weight</span><p>The cover prints three list words: <span class="wd">énergie</span>, <span class="wd">monnaie</span> and the author's first name. Two slots, three candidates. The repeat rule that shapes the pictures also drops <span class="wd">énergie</span>, which is printed in three figures. Current reading: <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮</span>. The pair (<span class="wd">énergie</span>, <span class="wd">monnaie</span>) has also been run against our main readings and missed.</p></article><article class="block" data-s="open"><header><h3>Olympic years</h3><span class="tag">Words 15–16</span></header><div class="meter"><span style="width:40%"></span></div><span class="conf">40% planning weight</span><p>The author was born in 1960 and entered the École polytechnique in 1980, both Olympic years. Read as list ranks, those give <span class="wd">utopie</span> and <span class="wd">vedette</span>, a reading public on forums since 2025. Neither word is printed in the book, so the clue's own rule rules them out, and long searches with them missed. Only five in-book words sit at Olympic-year ranks. Current reading: <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮</span>. This is the step we trust least.</p></article><article class="block" data-s="open"><header><h3>Département</h3><span class="tag">Word 17</span></header><div class="meter"><span style="width:50%"></span></div><span class="conf">50% planning weight</span><p>The surname Noizat comes mostly from the Creuse, département 23. Tried and ruled out: <span class="wd">creuser</span> (not printed; only <span class="wd">creuse</span> is), <span class="wd">noisette</span>, <span class="wd">alchimie</span> (Paris birthplace), Allier, Indre and Cher as numbers, and a fully open word 17 against our core. Current reading: <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮▮</span>.</p></article><article class="block" data-s="mid"><header><h3>Contents</h3><span class="tag">Words 18–19</span></header><div class="meter"><span style="width:95%"></span></div><span class="conf">95% planning weight</span><p>The table of contents holds exactly seven list words: <span class="wd">énergie</span>, <span class="wd">économie</span>, <span class="wd">monnaie</span>, <span class="wd">progrès</span>, <span class="wd">amour</span>, <span class="wd">bonheur</span>, <span class="wd">science</span>. We are sure of the set. Every ordered pair of the seven has been run against the core. Current pair: <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮</span>.</p></article><article class="block" data-s="mid"><header><h3>Chapter opening</h3><span class="tag">Words 20–21</span></header><div class="meter"><span style="width:85%"></span></div><span class="conf">85% planning weight</span><p>"At the start of a chapter on a central theme." The book's own glossary calls energy its central thesis, and the money chapter is the obvious rival. "Start" has no fixed length, so we ran the first 40 list words of each candidate chapter, then all 60 section openings and adjacent pairs in a dozen chapters. Current reading: <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮</span> <span class="wd masked" title="hidden while the prize is unclaimed">▮▮▮▮▮▮</span>.</p></article><article class="block" data-s="sure"><header><h3>Slogan</h3><span class="tag">Words 22–24</span></header><div class="meter"><span style="width:99%"></span></div><span class="conf">99% planning weight</span><p>Samsung's 2024 Galaxy anthem with TXT is titled <i>Open Always Wins</i>, and clue 7 paraphrases it word for word. <span class="wd">open</span> <span class="wd">always</span> <span class="wd">win</span>. We opened even this block late on (any two words in 22–23, and the order swapped) to be sure. No hit.</p></article><article class="block" data-s="sure"><header><h3>French to English</h3><span class="tag">All 21 French words</span></header><div class="meter"><span style="width:99%"></span></div><span class="conf">99% planning weight</span><p>Each French word is replaced by the English word on the same line of the BIP39 list, counting from 1, as the <span class="wd">staff</span> = 1697 example shows. We also tried ranks shifted by one and an offset of 1000. Nothing.</p></article>
+  </div>
+</section>
+
+<section class="stack-lg">
+  <div class="col stack">
+    <p class="eyebrow">04 · The search</p>
+    <h2>5.0 trillion guesses, all wrong</h2>
+    <p>Every run was a box: a fixed choice for some blocks and a list of options for the rest. Each box was logged with its size, then folded into one graph of what has and has not been tested. The line below is the running total, on a log scale. Each dot is one run.</p>
+  </div>
+  <div class="chart-wrap" role="region" tabindex="0" aria-label="Chart of candidates tested"><svg id="chart" viewBox="0 0 980 360" role="img" aria-label="Cumulative candidate phrases tested over time, log scale"></svg></div>
+  <div class="tbl" role="region" tabindex="0" aria-label="Largest runs"><table>
+    <thead><tr><th>Run</th><th>Finished (UTC)</th><th>What it opened</th><th class="r">Candidates</th></tr></thead>
+    <tbody><tr><td class="mono">RY-1</td><td class="num">2026-11-11 17:38</td><td>years fully open over 557 x 557 printed number pairs, core elsewhere</td><td class="r">5.75e+11</td></tr><tr><td class="mono">JOINT-MP</td><td class="num">2026-11-09 20:56</td><td>words 17, 20 and 21 all fully open on the core reading</td><td class="r">4.21e+11</td></tr><tr><td class="mono">JOINT-E</td><td class="num">2026-11-10 01:55</td><td>the same, with the energy/money cover pair</td><td class="r">4.21e+11</td></tr><tr><td class="mono">SO-b12-13</td><td class="num">2026-11-12 05:11</td><td>20-21 = first pair of the last 20 section openings (SO-25..44); all 60 sections now done</td><td class="r">3.39e+11</td></tr><tr><td class="mono">ADJ-b15</td><td class="num">2026-11-12 08:03</td><td>20-21 = adjacent pairs 2-12 of the text of ch9 Bitcoin and 3-12 of ch12 Progres</td><td class="r">3.22e+11</td></tr><tr><td class="mono">ADJ-b14</td><td class="num">2026-11-12 06:34</td><td>20-21 = adjacent pairs 3-12 of the text of ch4 Energie and ch11 Monnaie</td><td class="r">3.05e+11</td></tr><tr><td class="mono">ADJ-b17</td><td class="num">2026-11-12 10:37</td><td>20-21 = adjacent pairs in the first 8 list words of ch17 Amour, ch18 Bonheur, ch23 Science</td><td class="r">2.88e+11</td></tr><tr><td class="mono">ADJ-b16</td><td class="num">2026-11-12 09:18</td><td>20-21 = adjacent pairs in the first 12 list words of ch5 Entropie and the Conclusion</td><td class="r">2.71e+11</td></tr><tr><td class="mono">SO-b10</td><td class="num">2026-11-12 02:45</td><td>20-21 = first pair of 12 more section openings (SO-01..12)</td><td class="r">2.03e+11</td></tr><tr><td class="mono">SO-b11</td><td class="num">2026-11-12 03:39</td><td>20-21 = first pair of 12 more section openings (SO-13..24)</td><td class="r">2.03e+11</td></tr></tbody>
+  </table></div>
+</section>
+
+<section class="stack-lg">
+  <div class="col stack">
+    <p class="eyebrow">05 · The tools</p>
+    <h2>From a Python loop to fifteen times faster C</h2>
+    <p>The checker itself is tiny: pack 253 bits, hash, compare one byte for each of the eight check words. The work was in making it fast and making sure it was right.</p>
+  </div>
+  <div class="tools">
+    <div class="tool"><b>bf → bf4</b><p>Plain C brute-forcers over word pools. bf4 moved to 128-bit integers after we found that six-word groups (66 bits) silently overflowed 64-bit math. Eight runs had to be thrown away.</p></div>
+    <div class="tool"><b>bf5 → bf6</b><p>SHA-256 with the CPU's SHA-NI instructions, about 7 times faster. Measured around 41.5 million candidates a second on one cloud box.</p></div>
+    <div class="tool"><b>bf7</b><p>OpenSSL's hashing turned out about 15 times faster again inside cloud containers. A 300-billion box now takes about an hour.</p></div>
+    <div class="tool"><b>Positive controls</b><p>From day two, every run starts by planting a known phrase and checking the tool finds it. Before that, a bug could pass as a miss.</p></div>
+    <div class="tool"><b>Independent oracle audit</b><p>Two outside libraries (mnemonic and bip-utils) re-derived the word lists, checksum and first BIP84 address. They agreed with our engines on every check.</p></div>
+    <div class="tool"><b>The work graph</b><p>All clues, answer options and 160 runs as one graph, so we could see which combinations were truly untested and which only felt that way.</p></div>
+  </div>
+</section>
+
+<section class="stack-lg">
+  <div class="col stack">
+    <p class="eyebrow">06 · What we got wrong</p>
+    <h2>The tools were sound. The reasoning wasn't always.</h2>
+    <p>Halfway through we stopped and wrote a post-mortem against the raw files instead of our summaries. Every engine checked out. The mistakes were in how we thought.</p>
+  </div>
+  <div class="lessons col">
+    <div class="lesson"><div><h3>We mistook a fit for a proof</h3><p>One picture rule was the only one we had written down that gave exactly 14 words. We called it "locked by counting" and froze sixteen words on it, then spent most compute on the words that were easy to open instead of the ones we were least sure of.</p></div></div>
+    <div class="lesson"><div><h3>"Every single change missed, so two blocks are wrong"</h3><p>It sounded like a deduction and drove the whole plan. It wasn't: the single-change tests were never exhaustive, and one wrong rule can move two blocks at once.</p></div></div>
+    <div class="lesson"><div><h3>We mixed readings that contradict each other</h3><p>Our biggest run combined a picture rule that drops repeated words with a cover reading that keeps one. No single setter would do both. By our own numbers that run had a 3-in-4 chance of missing before it started.</p></div></div>
+    <div class="lesson"><div><h3>Two standards of evidence side by side</h3><p>We demanded that one word be printed in the book, and accepted two neighbours that never are. The clue says all 21 French words are in the book. That clash is now our weakest link.</p></div></div>
+    <div class="lesson"><div><h3>Five agreeing threads were one opinion</h3><p>Several AI threads "re-confirmed" the same reading from the same notes. Only a blind re-extraction was independent, and it said it could not justify a unique answer. Confidence moved with no new test behind it.</p></div></div>
+  </div>
+</section>
+
+<section class="stack-lg">
+  <div class="col stack">
+    <p class="eyebrow">07 · What's left</p>
+    <h2>The answer probably needs three changes at once</h2>
+    <p>The graph says the core reading and every one-block change around it are fully tested. What remains untested mostly needs three blocks changed together, or a word that sits outside every option list we wrote down.</p>
+    <p class="callout">The biggest single assumption is the bridge from the author's biography to the Olympic years. If the two year words are printed in the book, as the clue says all French words are, they cannot be the usual "year as list rank" reading. Relaxing that one step reopens about 30% of everything we still think plausible.</p>
+    <p>Our standing rules going forward: assume the setter made no mistakes, assume the e-book is enough, and when nothing matches, one of our own assumptions is wrong. Massive compute has failed for two years. This puzzle rewards thinking differently, not hashing faster.</p>
+  </div>
+</section>
+
+<section class="stack">
+  <div class="col stack">
+    <p class="eyebrow">08 · How we worked</p>
+    <h2>One human, many AI threads, one shared notebook</h2>
+    <p>The hunt ran as a project of parallel AI threads (Claude) plus a second agent (Codex), coordinated by one person who mostly checked in from a phone. Everything went into one repository: a single reasoning file as the source of truth, a ledger of every tested combination, and a lab notebook with a hypothesis, a prediction and a result for each test.</p>
+    <p>The human's job turned out to be the hardest one: saying no to more brute force, asking for reasons instead of searches, and insisting that we think like a French puzzle setter.</p>
+  </div>
+</section>
+
+</main>
+<footer>
+  <p>Independent fan project. Not affiliated with the author or publisher. Short quotes from the published clues only; no book text or images are reproduced. Get the book from its publisher to play.</p>
+  <p>Generated from the project's run log on 12 Nov 2026, 11:45 UTC. All times are UTC.</p>
+</footer>
+<script>
+const SLOTS=[{"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "picture"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "cover"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "cover"}, {"w": "▮▮▮▮▮", "m": true, "s": "open", "src": "Olympic year"}, {"w": "▮▮▮▮▮", "m": true, "s": "open", "src": "Olympic year"}, {"w": "▮▮▮▮▮", "m": true, "s": "open", "src": "département"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "contents"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "contents"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "chapter start"}, {"w": "▮▮▮▮▮", "m": true, "s": "mid", "src": "chapter start"}, {"w": "open", "m": false, "s": "sure", "src": "slogan"}, {"w": "always", "m": false, "s": "sure", "src": "slogan"}, {"w": "win", "m": false, "s": "sure", "src": "slogan"}];
+const RUNS=[{"id": "M18", "t": 1794233400000, "n": 12000000000.0}, {"id": "W17-1", "t": 1794225660000, "n": 4940000000.0}, {"id": "D1", "t": 1794214500000, "n": 16400000000.0}, {"id": "D2", "t": 1794218520000, "n": 38200000000.0}, {"id": "D3", "t": 1794218820000, "n": 2470000000.0}, {"id": "D4", "t": 1794220620000, "n": 16400000000.0}, {"id": "S1", "t": 1794219420000, "n": 35000000000.0}, {"id": "O1", "t": 1794224520000, "n": 47000000000.0}, {"id": "Q1", "t": 1794226440000, "n": 21200000000.0}, {"id": "OY-T1", "t": 1794235440000, "n": 1640000000.0}, {"id": "OY-T2", "t": 1794235920000, "n": 1630000000.0}, {"id": "CORE-V", "t": 1794237000000, "n": 824000000.0}, {"id": "S9", "t": 1794237000000, "n": 326000000.0}, {"id": "BS1", "t": 1794235500000, "n": 1230000000.0}, {"id": "PARIS75", "t": 1794243720000, "n": 411041792}, {"id": "JOINT-MP", "t": 1794257760000, "n": 420906795008}, {"id": "JOINT-E", "t": 1794275700000, "n": 420906795008}, {"id": "BTC-2/3", "t": 1794272220000, "n": 53100000000.0}, {"id": "SR-1a/b", "t": 1794262200000, "n": 1900000000.0}, {"id": "SR-2", "t": 1794272040000, "n": 2850000000.0}, {"id": "SR-2-Codex", "t": 1794265860000, "n": 1896853504}, {"id": "SR-3", "t": 1794271200000, "n": 30300000000.0}, {"id": "SR-4", "t": 1794271560000, "n": 11400000000.0}, {"id": "GS-1", "t": 1794324240000, "n": 7587414016}, {"id": "PR-T1", "t": 1794388680000, "n": 411041792}, {"id": "REV-a..d", "t": 1794389640000, "n": 1640000000.0}, {"id": "YB-1", "t": 1794393000000, "n": 751131968}, {"id": "YB-3", "t": 1794396060000, "n": 1031784572}, {"id": "FO-2", "t": 1794397680000, "n": 6190000000.0}, {"id": "FO-3", "t": 1794399060000, "n": 9290000000.0}, {"id": "FX-1", "t": 1794414000000, "n": 33900000000.0}, {"id": "FX-2", "t": 1794414000000, "n": 2060000000.0}, {"id": "FX-3", "t": 1794414000000, "n": 4320000000.0}, {"id": "FX-4", "t": 1794414000000, "n": 11700000000.0}, {"id": "RY-1", "t": 1794418680000, "n": 574686636904}, {"id": "HN-1", "t": 1794423120000, "n": 65780058}, {"id": "HN-2", "t": 1794424620000, "n": 73272000000}, {"id": "ST-1", "t": 1794425760000, "n": 33870503828}, {"id": "GF-1", "t": 1794426900000, "n": 640}, {"id": "GF-2", "t": 1794427020000, "n": 2088}, {"id": "GF-3/4/5", "t": 1794427020000, "n": 1472}, {"id": "GF-6/7", "t": 1794427020000, "n": 5856}, {"id": "GF-8/9/10", "t": 1794427020000, "n": 2880}, {"id": "GF-11/12", "t": 1794428400000, "n": 1104}, {"id": "GF-13/14", "t": 1794429600000, "n": 2424}, {"id": "QW-03a", "t": 1794428400000, "n": 193780300}, {"id": "QW-04a", "t": 1794428460000, "n": 1496812800}, {"id": "QW-07", "t": 1794428520000, "n": 3891763456}, {"id": "QW-03b", "t": 1794428580000, "n": 3321053400}, {"id": "QW-06", "t": 1794428700000, "n": 4560660300}, {"id": "QW-04b", "t": 1794428820000, "n": 6637657600}, {"id": "QW-01", "t": 1794429120000, "n": 13883949100}, {"id": "QW-05", "t": 1794429420000, "n": 17280869300}, {"id": "QW-02", "t": 1794429780000, "n": 18209889600}, {"id": "QW-08a", "t": 1794430140000, "n": 16935251914}, {"id": "QW-08b", "t": 1794430500000, "n": 16935251914}, {"id": "GF-15/16", "t": 1794431280000, "n": 880}, {"id": "GF-17/18", "t": 1794432900000, "n": 5208}, {"id": "QW-09", "t": 1794430560000, "n": 2355204600}, {"id": "QW-12", "t": 1794430620000, "n": 1520220100}, {"id": "QW-11", "t": 1794430860000, "n": 9121320600}, {"id": "QW-10", "t": 1794431280000, "n": 13026948900}, {"id": "CO-ch12", "t": 1794431940000, "n": 16935251914}, {"id": "CO-intro", "t": 1794432540000, "n": 16935251914}, {"id": "CO-concl", "t": 1794433140000, "n": 16935251914}, {"id": "CO-ch6", "t": 1794433740000, "n": 16935251914}, {"id": "CO-ch7", "t": 1794434340000, "n": 16935251914}, {"id": "PA-1", "t": 1794430740000, "n": 433958700}, {"id": "PA-2", "t": 1794430980000, "n": 7437288600}, {"id": "PA-3", "t": 1794432000000, "n": 19337199672}, {"id": "PA-4", "t": 1794431340000, "n": 9865918200}, {"id": "SP-1", "t": 1794432180000, "n": 4653735000}, {"id": "CA-1/2", "t": 1794433380000, "n": 33870503828}, {"id": "CO-ch4b", "t": 1794433980000, "n": 16935251914}, {"id": "CO-ch11b", "t": 1794434460000, "n": 16935251914}, {"id": "GF-19/20", "t": 1794434820000, "n": 848}, {"id": "GF-21/22", "t": 1794436800000, "n": 560}, {"id": "OR-2", "t": 1794434880000, "n": 19035716784}, {"id": "NR-2", "t": 1794435360000, "n": 24966837504}, {"id": "PA-5", "t": 1794436020000, "n": 32546902500}, {"id": "CO-b4", "t": 1794437640000, "n": 84676259570}, {"id": "GF-23/24", "t": 1794438720000, "n": 7560}, {"id": "CO-b5", "t": 1794439620000, "n": 101611511484}, {"id": "CP-PM", "t": 1794439980000, "n": 16935251914}, {"id": "GF-25/26", "t": 1794440700000, "n": 11784}, {"id": "GF-27/28", "t": 1794442980000, "n": 6816}, {"id": "CO-b6", "t": 1794442500000, "n": 135482015312}, {"id": "CP-ME", "t": 1794442800000, "n": 16935251914}, {"id": "SE-1", "t": 1794442800000, "n": 1319616550}, {"id": "SE-2", "t": 1794442860000, "n": 3283675416}, {"id": "SE-3", "t": 1794442860000, "n": 753389700}, {"id": "SE-4", "t": 1794442920000, "n": 3283675416}, {"id": "SE-5", "t": 1794442980000, "n": 1675344600}, {"id": "SE-6", "t": 1794443040000, "n": 4457413576}, {"id": "GF-29/30", "t": 1794445500000, "n": 5352}, {"id": "CO-b7", "t": 1794445440000, "n": 152417267226}, {"id": "CP-PE/EP", "t": 1794445980000, "n": 33870503828}, {"id": "GF-31/32", "t": 1794448320000, "n": 1632}, {"id": "SO-b9", "t": 1794448200000, "n": 135482015312}, {"id": "GF-33/34", "t": 1794451200000, "n": 4716}, {"id": "SO-b10", "t": 1794451500000, "n": 203223022968}, {"id": "GF-35/36", "t": 1794453960000, "n": 10320}, {"id": "SO-b11", "t": 1794454740000, "n": 203223022968}, {"id": "GF-37/38", "t": 1794457080000, "n": 5924}, {"id": "GF-39", "t": 1794460200000, "n": 1800}, {"id": "SO-b12-13", "t": 1794460260000, "n": 338705038280}, {"id": "GF-40", "t": 1794463320000, "n": 1848}, {"id": "ADJ-b14", "t": 1794465240000, "n": 304834534452}, {"id": "GF-41", "t": 1794466500000, "n": 1152}, {"id": "GF-42", "t": 1794469560000, "n": 3456}, {"id": "ADJ-b15", "t": 1794470580000, "n": 321769786366}, {"id": "GF-43/44", "t": 1794472680000, "n": 13520}, {"id": "AA-1", "t": 1794474300000, "n": 3288334336}, {"id": "AA-2a/b/c", "t": 1794474780000, "n": 1080823772}, {"id": "ADJ-b16", "t": 1794475080000, "n": 270964030624}, {"id": "GF-45/46", "t": 1794475920000, "n": 9120}, {"id": "GF-47", "t": 1794479040000, "n": 3864}, {"id": "ADJ-b17", "t": 1794479820000, "n": 287899282538}, {"id": "GF-48", "t": 1794482280000, "n": 9504}, {"id": "YX-1/2/3", "t": 1794482760000, "n": 29895223792}];
+(function(){
+  const g=document.getElementById('slots');
+  SLOTS.forEach((s,i)=>{const d=document.createElement('div');d.className='slot';d.dataset.s=s.s;d.style.setProperty('--i',i);
+    d.innerHTML='<span class="n">'+String(i+1).padStart(2,'0')+'</span><span class="w'+(s.m?' masked':'')+'">'+s.w+'</span><span class="src">'+s.src+'</span>';g.appendChild(d)});
+  const b=document.getElementById('bits');
+  for(let i=0;i<24;i++){const d=document.createElement('div');
+    if(i<21)d.style.background='var(--bit)';else if(i<23)d.className='e';else{d.style.display='flex';d.style.gap='2px';d.style.background='none';
+      d.innerHTML='<div style="flex:3;background:var(--open);border-radius:2px"></div><div style="flex:8;background:var(--amber);border-radius:2px"></div>';d.style.flex='1.6'}
+    b.appendChild(d)}
+  const svg=document.getElementById('chart'),W=980,H=360,L=64,R=150,T=20,B=40;
+  const pts=RUNS.filter(r=>r.t&&r.n>0).sort((a,b)=>a.t-b.t);
+  let c=0;const cum=pts.map(r=>(c+=r.n,{t:r.t,c,n:r.n,id:r.id}));
+  const t0=pts[0].t,t1=pts[pts.length-1].t;
+  const x=t=>L+(t-t0)/(t1-t0)*(W-L-R);
+  const lo=0,hi=Math.ceil(Math.log10(c));const y=v=>T+(1-(Math.log10(Math.max(v,1))-lo)/(hi-lo))*(H-T-B);
+  let s='';
+  for(let e=lo;e<=hi;e+=2){s+='<line class="grid" x1="'+L+'" x2="'+(W-R)+'" y1="'+y(10**e)+'" y2="'+y(10**e)+'"/><text x="'+(L-8)+'" y="'+(y(10**e)+4)+'" text-anchor="end">1e'+e+'</text>'}
+  const day=86400000;for(let d=Math.ceil(t0/day)*day;d<=t1;d+=day){const dt=new Date(d);s+='<line class="grid" x1="'+x(d)+'" x2="'+x(d)+'" y1="'+T+'" y2="'+(H-B)+'" stroke-dasharray="2 4"/><text x="'+x(d)+'" y="'+(H-B+18)+'" text-anchor="middle">'+dt.getUTCDate()+' Nov</text>'}
+  const line=cum.map((p,i)=>(i?'L':'M')+x(p.t).toFixed(1)+','+y(p.c).toFixed(1)).join('');
+  s+='<path class="area" d="'+line+'L'+x(t1)+','+(H-B)+'L'+x(t0)+','+(H-B)+'Z"/><path class="cum" d="'+line+'"/>';
+  pts.forEach(r=>{s+='<circle class="dot" cx="'+x(r.t).toFixed(1)+'" cy="'+y(r.n).toFixed(1)+'" r="2.6"><title>'+r.id+': '+r.n.toExponential(2)+'</title></circle>'});
+  const last=cum[cum.length-1];s+='<circle class="end" cx="'+x(last.t)+'" cy="'+y(last.c)+'" r="5"/><text class="lbl" x="'+(x(last.t)+10)+'" y="'+(y(last.c)+4)+'">'+(last.c/1e12).toFixed(1)+' trillion</text><text x="'+(x(last.t)+10)+'" y="'+(y(last.c)+20)+'">running total</text>';
+  s+='<text x="'+L+'" y="'+(H-6)+'">dots: size of each run</text>';
+  svg.innerHTML=s;
+})();
+</script>
+</body>
+</html>
